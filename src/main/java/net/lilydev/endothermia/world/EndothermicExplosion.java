@@ -1,6 +1,7 @@
 package net.lilydev.endothermia.world;
 
 import net.lilydev.endothermia.block.EndothermiaBlocks;
+import net.lilydev.endothermia.world.damage.EndothermiaDamageSources;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -32,7 +33,7 @@ public class EndothermicExplosion extends Explosion {
 
     @Override
     public DamageSource getDamageSource() {
-        return EndothermiaDamageSource.FROSTBITE;
+        return EndothermiaDamageSources.FROSTBITE.getSource();
     }
 
     @Override
@@ -78,7 +79,7 @@ public class EndothermicExplosion extends Explosion {
             this.world.playSound(this.pos.x, this.pos.y, this.pos.z, SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.BLOCKS, 4.0f, (1.0f + (this.world.random.nextFloat() - this.world.random.nextFloat()) * 0.2f) * 0.7f, false);
         }
         this.getAffectedBlocks().forEach(pos -> {
-            System.out.println("Affecting block at " + pos);
+            //System.out.println("Affecting block at " + pos);
             BlockState state = this.world.getBlockState(pos);
             Block block = state.getBlock();
             if (state.isIn(BlockTags.PLANKS)) {

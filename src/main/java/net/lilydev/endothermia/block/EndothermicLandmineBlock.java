@@ -26,9 +26,9 @@ public class EndothermicLandmineBlock extends Block {
     @Override
     public void onSteppedOn(World world, BlockPos pos, BlockState state, Entity entity) {
         super.onSteppedOn(world, pos, state, entity);
-        EndothermicExplosion explosion = new EndothermicExplosion(world, entity, pos.getX(), pos.getY(), pos.getZ(), 2.5F);
-        explosion.affectWorld(true);
+        EndothermicExplosion explosion = new EndothermicExplosion(world, null, pos.getX(), pos.getY(), pos.getZ(), 2.5F);
         explosion.collectBlocksAndDamageEntities();
+        explosion.affectWorld(true);
         world.removeBlock(pos, false);
     }
 }
