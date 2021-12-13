@@ -1,6 +1,7 @@
 package net.lilydev.endothermia.world;
 
 import net.lilydev.endothermia.block.EndothermiaBlocks;
+import net.lilydev.endothermia.block.EndothermiaBlocks.BlockEntry;
 import net.lilydev.endothermia.world.damage.EndothermiaDamageSources;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -83,11 +84,11 @@ public class EndothermicExplosion extends Explosion {
             BlockState state = this.world.getBlockState(pos);
             Block block = state.getBlock();
             if (state.isIn(BlockTags.PLANKS)) {
-                this.world.setBlockState(pos, EndothermiaBlocks.FROZEN_PLANKS.getDefaultState());
+                this.world.setBlockState(pos, BlockEntry.FROZEN_PLANKS.getBlock().getDefaultState());
             }
 
             if (block == Blocks.STONE) {
-                this.world.setBlockState(pos, EndothermiaBlocks.FROZEN_STONE.getDefaultState());
+                this.world.setBlockState(pos, BlockEntry.FROZEN_STONE.getBlock().getDefaultState());
             }
         });
     }
