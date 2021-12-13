@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "endothermia",
+  "version": "${version}",
+  "name": "Endothermia",
+  "description": "Technology that's cool.",
+  "authors": [
+    "PrismaticYT"
+  ],
+  "contact": {
+    "repo": "RPMYT/Endothermia"
+  },
+  "license": "GPL-3.0",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "net.lilydev.endothermia.Endothermia"
+    ],
+    "client": [
+      "net.lilydev.endothermia.client.EndothermiaClient"
+    ]
+  },
+  "mixins": [
+    "endothermia.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.12.11",
+    "fabric": "*",
+    "minecraft": "1.18.1"
+  }
+}
