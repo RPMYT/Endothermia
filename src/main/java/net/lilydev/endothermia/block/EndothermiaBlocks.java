@@ -12,10 +12,9 @@ import net.minecraft.tag.Tag;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
-import java.util.HashMap;
-
 public class EndothermiaBlocks {
-    public static final Tag.Identified<Block> FREEZABLE_BLOCKS = TagFactory.BLOCK.create(new Identifier("endothermia", "freezable_blocks"));
+    // this tag isn't useful, probably should be removed
+    public static final Tag.Identified<Block> FREEZABLE_BLOCKS = TagFactory.BLOCK.create(new Identifier(Endothermia.MODID, "freezable_blocks"));
 
     public static void register() {
         BlockEntry.setup();
@@ -29,6 +28,7 @@ public class EndothermiaBlocks {
         private Identifier identifier;
         private Block block;
         private BlockItem blockItem;
+        // returns a generic of the BlockItem so no casting is needed to whatever you want
         public <T extends BlockItem> T getBlockItem() {
             if (blockItem == null) {
                 return null;
@@ -39,6 +39,7 @@ public class EndothermiaBlocks {
                 return null;
             }
         }
+        // returns a generic of the Block so no casting is needed
         public <T extends Block> T getBlock() {
             try {
                 return (T) block;
@@ -57,6 +58,7 @@ public class EndothermiaBlocks {
         private BlockEntry(String name, Block block) {
             this(name, block, new BlockItem(block, new FabricItemSettings()));
         }
+        // registers all blocks & their items (if they exist)
         protected static void setup() {
             for (BlockEntry b : BlockEntry.values()) {
                 Registry.register(Registry.BLOCK, b.getIdentifier(), b.getBlock());

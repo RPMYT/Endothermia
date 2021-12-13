@@ -3,6 +3,7 @@
   "values": [
     "minecraft:stone",
     "minecraft:cobblestone",
-    "#minecraft:planks"
+    "#minecraft:planks",
+    "minecraft:water"
   ]
 }

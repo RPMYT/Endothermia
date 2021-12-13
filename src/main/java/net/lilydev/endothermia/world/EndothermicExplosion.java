@@ -45,10 +45,11 @@ public class EndothermicExplosion extends Explosion {
         for (int j = 0; j < 16; ++j) {
             for (k = 0; k < 16; ++k) {
                 block2: for (l = 0; l < 16; ++l) {
-                    if (j != 0 && j != 15 && k != 0 && k != 15 && l != 0 && l != 15) continue;
-                    double d = (float)j / 15.0f * 2.0f - 1.0f;
-                    double e = (float)k / 15.0f * 2.0f - 1.0f;
-                    double f = (float)l / 15.0f * 2.0f - 1.0f;
+                    if (j != 0 && j != 15 && k != 0 && k != 15 && l != 0 && l != 15)
+                        continue;
+                    double d = (float) j / 15.0f * 2.0f - 1.0f;
+                    double e = (float) k / 15.0f * 2.0f - 1.0f;
+                    double f = (float) l / 15.0f * 2.0f - 1.0f;
                     double g = Math.sqrt(d * d + e * e + f * f);
                     d /= g;
                     e /= g;
@@ -56,16 +57,18 @@ public class EndothermicExplosion extends Explosion {
                     double m = this.pos.x;
                     double n = this.pos.y;
                     double o = this.pos.z;
-                    for (float h = this.power * (0.7f + this.world.random.nextFloat() * 0.6f); h > 0.0f; h -= 0.22500001f) {
+                    for (float h = this.power
+                            * (0.7f + this.world.random.nextFloat() * 0.6f); h > 0.0f; h -= 0.22500001f) {
                         BlockPos blockPos = new BlockPos(m, n, o);
                         BlockState blockState = this.world.getBlockState(blockPos);
-                        if (!this.world.isInBuildLimit(blockPos)) continue block2;
+                        if (!this.world.isInBuildLimit(blockPos))
+                            continue block2;
                         if (blockState.isIn(EndothermiaBlocks.FREEZABLE_BLOCKS)) {
                             blocks.add(blockPos);
                         }
-                        m += d * (double)0.3f;
-                        n += e * (double)0.3f;
-                        o += f * (double)0.3f;
+                        m += d * (double) 0.3f;
+                        n += e * (double) 0.3f;
+                        o += f * (double) 0.3f;
                     }
                 }
             }
@@ -77,19 +80,54 @@ public class EndothermicExplosion extends Explosion {
     @Override
     public void affectWorld(boolean particles) {
         if (this.world.isClient) {
-            this.world.playSound(this.pos.x, this.pos.y, this.pos.z, SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.BLOCKS, 4.0f, (1.0f + (this.world.random.nextFloat() - this.world.random.nextFloat()) * 0.2f) * 0.7f, false);
+            this.world.playSound(this.pos.x, this.pos.y, this.pos.z, SoundEvents.ENTITY_GENERIC_EXPLODE,
+                    SoundCategory.BLOCKS, 4.0f,
+                    (1.0f + (this.world.random.nextFloat() - this.world.random.nextFloat()) * 0.2f) * 0.7f, false);
+        } else {
+            this.getAffectedBlocks().forEach(pos -> {
+                FreezeBlockMaps.INSTANCE.runAll(pos, this);
+            });
         }
-        this.getAffectedBlocks().forEach(pos -> {
-            //System.out.println("Affecting block at " + pos);
-            BlockState state = this.world.getBlockState(pos);
-            Block block = state.getBlock();
-            if (state.isIn(BlockTags.PLANKS)) {
-                this.world.setBlockState(pos, BlockEntry.FROZEN_PLANKS.getBlock().getDefaultState());
-            }
+    }
 
-            if (block == Blocks.STONE) {
-                this.world.setBlockState(pos, BlockEntry.FROZEN_STONE.getBlock().getDefaultState());
+    public static class FreezeBlockMaps {
+        public static FreezeBlockMaps INSTANCE = new FreezeBlockMaps();
+
+        public FreezeBlockMaps() {
+            // add these anywhere
+            addMap((pos, state, explosion) -> {
+                if (state.isIn(BlockTags.PLANKS)) {
+                    explosion.world.setBlockState(pos, BlockEntry.FROZEN_PLANKS.getBlock().getDefaultState());
+                }
+            });
+            addMap((pos, state, explosion) -> {
+                Block block = state.getBlock();
+                if (block == Blocks.STONE) {
+                    explosion.world.setBlockState(pos, BlockEntry.FROZEN_STONE.getBlock().getDefaultState());
+                }
+            });
+            addMap((pos, state, explosion) -> {
+                Block block = state.getBlock();
+                if (block == Blocks.WATER) {
+                    explosion.world.setBlockState(pos, Blocks.ICE.getDefaultState());
+                }
+            });
+        }
+
+        public static interface FreezeBlockMap {
+            public void checkBlock(BlockPos pos, BlockState state, EndothermicExplosion explosion);
+        }
+
+        private ArrayList<FreezeBlockMap> maps = new ArrayList<>();
+
+        public void addMap(FreezeBlockMap map) {
+            this.maps.add(map);
+        }
+
+        public void runAll(BlockPos pos, EndothermicExplosion explosion) {
+            for (FreezeBlockMap map : this.maps) {
+                map.checkBlock(pos, explosion.world.getBlockState(pos), explosion);
             }
-        });
+        }
     }
 }
