@@ -4,6 +4,7 @@ import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.tag.TagFactory;
 import net.lilydev.endothermia.Endothermia;
+import net.lilydev.endothermia.block.frostburner.FrostburnerBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.BlockItem;
@@ -20,14 +21,18 @@ public class EndothermiaBlocks {
         BlockEntry.setup();
     }
 
-    public static enum BlockEntry {
+    @SuppressWarnings("unchecked")
+    public enum BlockEntry {
         FROZEN_STONE("frozen_stone", new Block(FabricBlockSettings.copyOf(Blocks.STONE).sounds(BlockSoundGroup.GLASS).slipperiness(0.98F))),
         FROZEN_PLANKS("frozen_planks", new Block(FabricBlockSettings.copyOf(Blocks.OAK_PLANKS).sounds(BlockSoundGroup.GLASS).slipperiness(0.98F))),
-        ENDOTHERMIC_LANDMINE("endothermic_landmine", new EndothermicLandmineBlock())
+        ENDOTHERMIC_LANDMINE("endothermic_landmine", new EndothermicLandmineBlock()),
+        FROSTBURNER("frostburner", new FrostburnerBlock())
         ;
-        private Identifier identifier;
-        private Block block;
-        private BlockItem blockItem;
+
+        private final Identifier identifier;
+        private final Block block;
+        private final BlockItem blockItem;
+
         // returns a generic of the BlockItem so no casting is needed to whatever you want
         public <T extends BlockItem> T getBlockItem() {
             if (blockItem == null) {
@@ -50,16 +55,16 @@ public class EndothermiaBlocks {
         public Identifier getIdentifier() {
             return this.identifier;
         }
-        private BlockEntry(String name, Block block, BlockItem item) {
+        BlockEntry(String name, Block block, BlockItem item) {
             this.identifier = new Identifier(Endothermia.MODID, name);
             this.blockItem = item;
             this.block = block;
         }
-        private BlockEntry(String name, Block block) {
+        BlockEntry(String name, Block block) {
             this(name, block, new BlockItem(block, new FabricItemSettings()));
         }
         // registers all blocks & their items (if they exist)
-        protected static void setup() {
+        private static void setup() {
             for (BlockEntry b : BlockEntry.values()) {
                 Registry.register(Registry.BLOCK, b.getIdentifier(), b.getBlock());
                 if (b.getBlockItem() != null) {
